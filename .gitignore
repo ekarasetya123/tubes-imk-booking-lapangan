@@ -1,0 +1,16 @@
+# Berkas unggahan bukti pembayaran (jangan di-commit)
+uploads/bukti/*
+!uploads/bukti/.gitkeep
+
+# Konfigurasi lokal berisi kredensial
+config.php
+
+# File editor dan OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+*.swp
+
+# Log
+*.log
