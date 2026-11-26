@@ -59,8 +59,6 @@ $active = 'login';
 require __DIR__ . '/../includes/header.php';
 ?>
 
-<?php require __DIR__ . '/../includes/header.php'; ?>
-
 <div class="row g-0 align-items-center auth-shell min-vh-100">
     <!-- Kolom ilustrasi (hanya desktop) -->
     <div class="col-lg-5 d-none d-lg-flex auth-ilustrasi">

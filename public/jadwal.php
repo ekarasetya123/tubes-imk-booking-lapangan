@@ -221,7 +221,7 @@ require __DIR__ . '/../includes/header.php';
 
 <?php else: ?>
 <div class="alert alert-warning">Belum ada lapangan aktif yang bisa dijadwalkan.</div>
-<?php endif;
+<?php endif; ?>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>
 
