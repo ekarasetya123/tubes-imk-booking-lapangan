@@ -390,3 +390,223 @@ label.form-label { font-weight: 600; color: var(--warna-tekst); font-size: 0.9re
   .stat-angka { font-size: 1.6rem; }
   .card-terdekat { border-radius: var(--radius-kard); }
 }
+
+/* ============================================================
+   Perluasan Design System — Poles UI/UX (Prompt 2)
+   Warna netral hangat, hierarki tipografi, komponen baru.
+   ============================================================ */
+
+/* Variabel tambahan */
+:root {
+  --warna-netral-hangat: #f4f1ea;
+  --warna-netral-hangat-gelap: #e7dfd4;
+  --skala-tipografi-1: 0.875rem;
+  --skala-tipografi-2: 1rem;
+  --skala-tipografi-3: 1.125rem;
+  --skala-tipografi-4: 1.25rem;
+  --durisi-cepat: 0.15s;
+  --durisi-lambat: 0.3s;
+}
+
+/* Hierarki tipografi (satu keluarga font, skala 4/8px) */
+h1, h2, h3, h4, h5, h6 { letter-spacing: -0.02em; font-weight: 700; }
+.section-title { font-weight: 800; }
+h1 { font-size: var(--skala-tipografi-4); margin-bottom: 0.5rem; }
+h2 { font-size: clamp(1.5rem, 2vw, 2rem); margin-bottom: 0.5rem; }
+h3 { font-size: var(--skala-tipografi-3); margin-bottom: 0.5rem; }
+h4 { font-size: var(--skala-tipografi-2); margin-bottom: 0.5rem; }
+h5 { font-size: var(--skala-tipografi-1); margin-bottom: 0.5rem; }
+h6 { font-size: 0.875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--warna-tekst-redup); margin-bottom: 0.5rem; }
+.body-tes { font-size: var(--skala-tipografi-2); }
+.label-form { font-weight: 600; color: var(--warna-tekst); font-size: 0.9rem; }
+
+/* Netral hangat sebagai latar alternatif */
+.bg-netral-hangat { background-color: var(--warna-netral-hangat); }
+.border-netral-hangat { border-color: var(--warna-netral-hangat-gelap); }
+
+/* Panel ringkasan (gantikan kartu hero yang kosong) */
+.panel-ringkasan {
+  background: linear-gradient(135deg, var(--warna-netral-hangat), #ffffff);
+  border: 1px solid var(--warna-netral-hangat-gelap);
+  border-radius: var(--radius-kard);
+  padding: 1.5rem;
+  box-shadow: var(--bayangan-halus);
+  display: flex; flex-direction: column; gap: 1rem;
+}
+.panel-ringkasan .stat-angka { font-size: 1.6rem; }
+
+/* Strip hari horizontal (jadwal) */
+.hari-strip {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  scrollbar-width: none;
+}
+.hari-strip::-webkit-scrollbar { display: none; }
+.hari-chip {
+  flex: 0 0 auto;
+  min-width: 82px;
+  padding: 0.8rem 0.5rem;
+  border-radius: 14px;
+  border: 1px solid rgba(14,124,91,0.10);
+  background: #fff;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transisi);
+  display: flex; flex-direction: column; align-items: center; gap: 0.25rem;
+}
+.hari-chip:hover { border-color: var(--warna-primer); background: rgba(14,124,91,0.04); }
+.hari-chip.aktif {
+  background: var(--warna-primer);
+  color: #fff;
+  border-color: var(--warna-primer);
+  box-shadow: var(--bayangan-halus);
+}
+.hari-chip .hari-tanggal { font-weight: 800; font-size: 1.35rem; line-height: 1; }
+.hari-chip .hari-nama { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.9; }
+
+/* Chip lapangan (tab pemilih di jadwal) */
+.chip-lapangan {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(14,124,91,0.10);
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: var(--transisi);
+}
+.chip-lapangan:hover { border-color: var(--warna-primer); background: rgba(14,124,91,0.04); }
+.chip-lapangan.aktif {
+  background: var(--warna-primer);
+  color: #fff;
+  border-color: var(--warna-primer);
+  box-shadow: var(--bayangan-halus);
+}
+
+/* Kartu lapangan beranda — tinggi sama, tombol di dasar (flex kolom + auto) */
+.card-lapangan { display: flex; flex-direction: column; height: 100%; }
+.card-lapangan-body { display: flex; flex-direction: column; flex: 1; padding: 1.2rem; }
+.card-lapangan-body .btn-aksi { margin-top: auto; }
+
+/* Panel total harga sticky (desktop) / bottom sheet (HP) */
+.panel-total-sticky {
+  position: sticky;
+  top: 110px;
+}
+@media (min-width: 992px) {
+  .panel-total-sticky { position: sticky; top: 110px; }
+}
+@media (max-width: 991.98px) {
+  .panel-total-bottom {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: #fff;
+    border-top: 1px solid rgba(14,124,91,0.08);
+    padding: 1rem 1.5rem 1rem;
+    box-shadow: 0 -8px 24px rgba(0,0,0,0.08);
+    z-index: 1000;
+    animation: naikPanel 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @keyframes naikPanel {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+}
+
+/* Dropzone bukti transfer (drag-and-drop) */
+.dropzone {
+  border: 2px dashed rgba(14,124,91,0.2);
+  border-radius: 14px;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  background: #f7faf8;
+  transition: var(--transisi);
+  cursor: pointer;
+}
+.dropzone.dragover {
+  border-color: var(--warna-primer);
+  background: rgba(14,124,91,0.06);
+  transform: scale(1.01);
+}
+.dropzone i { font-size: 2.5rem; color: var(--warna-tekst-redup); margin-bottom: 0.75rem; display: block; }
+.dropzone p { margin: 0; color: var(--warna-tekst-redup); font-size: 0.9rem; }
+
+/* Toast / pesan sistem seragam */
+.toast-lapanganku {
+  position: fixed;
+  top: 1rem; right: 1rem;
+  z-index: 1050;
+  min-width: 300px;
+  border: none;
+  border-radius: 14px;
+  box-shadow: var(--bayangan-angkat);
+  animation: masukToast var(--durisi-lambat) ease-out;
+}
+@keyframes masukToast {
+  from { transform: translateX(120%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Tombol salin (rekening) */
+.btn-salin {
+  background: #f4f6f5;
+  color: var(--warna-tekst-redup);
+  border: 1px solid #dee2e6;
+  font-weight: 600;
+  border-radius: var(--radius-tombol);
+  transition: var(--transisi);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+.btn-salin:hover { background: var(--warna-primer); color: #fff; border-color: var(--warna-primer); }
+
+/* Fokus keyboard terlihat (aksesibilitas) */
+*:focus-visible { outline: 3px solid var(--warna-primer); outline-offset: 2px; }
+
+/* State kosong ramah */
+.empty-state i { font-size: 4rem; opacity: 0.45; margin-bottom: 1rem; display: block; text-align: center; }
+.empty-state p { color: var(--warna-tekst-redup); }
+
+/* Motion:vreduced */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+/* Responsive lanjutan: tabel jadi kartu di HP */
+@media (max-width: 768px) {
+  .table-responsive table.table {
+    display: block;
+    width: 100%;
+  }
+  .table-responsive table.table thead { display: none; }
+  .table-responsive table.table tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(14,124,91,0.08);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .table-responsive table.table tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(14,124,91,0.06);
+  }
+  .table-responsive table.table tbody td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: var(--warna-tekst-redup);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .table-responsive table.table tbody td:last-child { border-bottom: none; }
+  .panel-total-sticky { position: static; }
+}
