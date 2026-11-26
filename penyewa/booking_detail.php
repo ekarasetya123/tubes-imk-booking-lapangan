@@ -1,6 +1,9 @@
 <?php
 /**
  * penyewa/booking_detail.php — detail booking + bukti transfer & batalkan.
+ * Poles UI/UX (PROMPT 2 D.2): stepper 4 langkah, hitung mundur batas bayar,
+ * kartu rekening dengan tombol salin + toast, dropzone bukti drag-and-drop
+ * dengan pratinjau gambar, modal konfirmasi batalkan.
  */
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/helpers.php';
@@ -38,21 +41,16 @@ $stmt = db()->prepare(
 $stmt->execute([$bookingId]);
 $pembayaran = $stmt->fetch();
 
-$sisaDetik = sisa_detik_batas_bayar($booking['batas_bayar']);
+$sisaDetik = (int) sisa_detik_batas_bayar($booking['batas_bayar']);
 [$teksStatus, $kelasStatus, $ikonStatus] = status_booking_label($booking['status']);
 
-// Tanggal dapat dibatalkan (belum dikonfirmasi) atau konferminasi >= 3 jam sebelum mulai
+// Tanggal dapat dibatalkan (belum dikonfirmasi) atau dikonfirmasi >= 3 jam sebelum mulai
 $mulai = strtotime($booking['tanggal'] . ' ' . $booking['jam_mulai']);
 $bisaBatalkan = ($booking['status'] !== 'dikonfirmasi' && $booking['status'] !== 'ditolak' && $booking['status'] !== 'dibatalkan')
     || ($booking['status'] === 'dikonfirmasi' && $mulai >= time() + 3 * 60 * 60);
 
 // Aksi batalkan (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'batalkan') {
-    require_once __DIR__ . '/../includes/db.php';
-    require_once __DIR__ . '/../includes/helpers.php';
-    require_once __DIR__ . '/../includes/auth.php';
-    start_session();
-    require_role('penyewa');
     if (!csrf_verify($_POST['csrf_token'] ?? null)) {
         set_flash('danger', 'Sesi tidak valid. Silakan coba lagi.');
         redirect(BASE_URL . '/../penyewa/booking_detail.php?id=' . $bookingId);
@@ -86,11 +84,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
 // Aksi unggah bukti (POST upload)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'bukti') {
-    require_once __DIR__ . '/../includes/db.php';
-    require_once __DIR__ . '/../includes/helpers.php';
-    require_once __DIR__ . '/../includes/auth.php';
-    start_session();
-    require_role('penyewa');
     if (!csrf_verify($_POST['csrf_token'] ?? null)) {
         set_flash('danger', 'Sesi tidak valid. Silakan coba lagi.');
         redirect(BASE_URL . '/../penyewa/booking_detail.php?id=' . $bookingId);
@@ -177,29 +170,66 @@ require __DIR__ . '/../includes/header.php';
 </div>
 
 <?php if ($booking['status'] === 'menunggu_pembayaran'): ?>
-<div class="alert alert-warning d-flex align-items-center gap-3 mb-4" role="alert">
+<div class="alert alert-warning d-flex align-items-center gap-3 mb-4" role="alert" id="alertBatasBayar">
     <i class="bi bi-hourglass-split fs-4" aria-hidden="true"></i>
     <div>
         <div class="fw-semibold">Batas waktu pembayaran</div>
-        <div class="fs-5 fw-bold" id="hitung-mundur"></div>
+        <div class="fs-5 fw-bold" id="hitung-mundur" data-detik="<?php echo (int) $sisaDetik; ?>">--:--:--</div>
         <div class="small">Unggah bukti transfer dalam waktu 2 jam, atau booking akan otomatis dibatalkan.</div>
     </div>
 </div>
 <?php endif; ?>
 
-<!-- STEPPER STATUS -->
-<div class="stepper mb-4">
-    <div class="stepper-item<?php echo in_array('menunggu_pembayaran', ['menunggu_pembayaran','menunggu_verifikasi','dikonfirmasi']) ? ' aktif' : ' selesai'; ?>"><span class="step-ball"><i class="bi bi-circle-fill"></i></span><span class="step-label">Dibuat</span></div>
-    <div class="stepper-item<?php echo $booking['status'] === 'menunggu_verifikasi' ? ' aktif' : (in_array($booking['status'], ['dikonfirmasi','ditolak']) ? ' selesai' : ''); ?>"><span class="step-ball"><span class="step-ikonen">£</span></span><span class="step-label">Bayar</span></div>
-    <div class="stepper-item<?php echo in_array($booking['status'], ['menunggu_verifikasi','dikonfirmasi','ditolak']) ? ' aktif' : ($booking['status'] === 'dibatalkan' ? '' : ''); ?>"><span class="step-ball"><span class="step-ikonen">v</span></span><span class="step-label">Verifikasi</span></div>
-    <div class="stepper-item<?php echo $booking['status'] === 'dikonfirmasi' ? ' aktif' : ''; ?>"><span class="step-ball"><i class="bi bi-check-circle-fill"></i></span><span class="step-label">Selesai</span></div>
+<!-- STEPPER STATUS (4 langkah) -->
+<div class="stepper mb-4" role="tablist" aria-label="Progres status booking">
+    <!-- 1. Dibuat -->
+    <?php
+    $kelasStepper1 = '';
+    if ($booking['status'] === 'menunggu_pembayaran') {
+        $kelasStepper1 = ' aktif';
+    } elseif (in_array($booking['status'], ['menunggu_verifikasi', 'dikonfirmasi', 'ditolak', 'dibatalkan'])) {
+        $kelasStepper1 = ' selesai';
+    }
+    ?>
+    <div class="stepper-item<?php echo $kelasStepper1; ?>" role="tab" aria-selected="<?php echo $booking['status'] === 'menunggu_pembayaran' ? 'true' : 'false'; ?>">
+        <span class="step-ball"><i class="bi bi-circle-fill"></i></span>
+        <span class="step-label">Dibuat</span>
+    </div>
+    <!-- 2. Bayar -->
+    <?php
+    $kelasStepper2 = '';
+    if ($booking['status'] === 'menunggu_verifikasi') {
+        $kelasStepper2 = ' aktif';
+    } elseif ($booking['status'] === 'ditolak') {
+        $kelasStepper2 = ' gagal';
+    } elseif (in_array($booking['status'], ['dikonfirmasi', 'dibatalkan'])) {
+        $kelasStepper2 = ' selesai';
+    }
+    ?>
+    <div class="stepper-item<?php echo $kelasStepper2; ?>" role="tab" aria-selected="<?php echo $booking['status'] === 'menunggu_verifikasi' ? 'true' : 'false'; ?>">
+        <span class="step-ball"><i class="bi bi-credit-card"></i></span>
+        <span class="step-label">Bayar</span>
+    </div>
+    <!-- 3. Verifikasi -->
+    <div class="stepper-item<?php
+        echo in_array($booking['status'], ['menunggu_verifikasi', 'dikonfirmasi', 'ditolak']) ? ' aktif'
+            : ($booking['status'] === 'dikonfirmasi' ? ' selesai' : '');
+    ?>" role="tab" aria-selected="<?php echo in_array($booking['status'], ['menunggu_verifikasi', 'dikonfirmasi']) ? 'true' : 'false'; ?>">
+        <span class="step-ball"><i class="bi bi-file-earmark-check"></i></span>
+        <span class="step-label">Verifikasi</span>
+    </div>
+    <!-- 4. Selesai -->
+    <div class="stepper-item<?php echo $booking['status'] === 'dikonfirmasi' ? ' aktif selesai' : ''; ?>" role="tab" aria-selected="<?php echo $booking['status'] === 'dikonfirmasi' ? 'true' : 'false'; ?>">
+        <span class="step-ball"><i class="bi bi-check-circle-fill"></i></span>
+        <span class="step-label">Selesai</span>
+    </div>
 </div>
 <div class="text-muted small mb-3">Status saat ini:
     <span class="badge-status badge-<?php echo e($kelasStatus); ?>"><i class="bi <?php echo e($ikonStatus); ?>"></i> <?php echo e($teksStatus); ?></span>
 </div>
 
 <div class="row g-3">
-    <!-- Informasi booking -->
+    <!-- Informasi booking & pembayaran -->
     <div class="col-lg-8 col-xl-9">
         <div class="card mb-4 border-0 shadow-sm">
             <div class="card-body">
@@ -239,10 +269,13 @@ require __DIR__ . '/../includes/header.php';
                 <h3 class="h6 card-subtitle">Pembayaran Transfer Manual</h3>
                 <div class="bg-lightest rounded p-3 mb-3">
                     <p class="small text-muted mb-1">Rekening tujuan</p>
-                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <div class="d-flex align-items-center gap-3 flex-wrap mb-2">
                         <span class="fw-semibold"><?php echo e(BANK_NAMA); ?></span>
-                        <span class="fw-bold" style="letter-spacing:.5px;"><?php echo e(BANK_NOREK); ?></span>
+                        <span class="fw-bold" style="letter-spacing:.5px;" id="rekening"><?php echo e(BANK_NOREK); ?></span>
                         <span class="small text-muted">a/n <?php echo e(BANK_ATAS_NAMA); ?></span>
+                        <button type="button" class="btn btn-sm btn-outline-aksi btn-salin" id="btnSalin" data-salin="<?php echo e(BANK_NOREK); ?>" title="Salin nomor rekening">
+                            <i class="bi bi-clipboard me-1"></i> Salin
+                        </button>
                     </div>
                     <div class="mt-2 small"><i class="bi bi-info-circle me-1"></i>Bukti harus berupa foto tangkap layar (JPG/PNG) atau studi kasus (PDF) maksimal 2 MB.</div>
                 </div>
@@ -252,15 +285,24 @@ require __DIR__ . '/../includes/header.php';
                     <?php echo csrf_field(); ?>
                     <input type="hidden" name="action" value="bukti">
                     <div class="mb-3">
-                        <label for="bukti" class="form-label"><i class="bi bi-upload me-1"></i>Unggah bukti transfer</label>
-                        <input type="file" id="bukti" name="bukti" class="form-control" accept=".jpg,.jpeg,.png,.pdf" required>
+                        <label for="bukti" class="form-label required"><i class="bi bi-upload me-1"></i>Unggah bukti transfer</label>
+                        <div class="dropzone border rounded-3 p-3 text-center position-relative" id="dropzoneBukti" role="button" tabindex="0" aria-label="Tarik atau pilih file bukti transfer">
+                            <input type="file" id="bukti" name="bukti" class="position-absolute w-100 h-100 opacity-0" accept=".jpg,.jpeg,.png,.pdf" required aria-hidden="true" onchange="previewBukti(this)">
+                            <div id="dropzoneIkon">
+                                <i class="bi bi-cloud-arrow-up-fill" aria-hidden="true"></i>
+                                <p>Seret file ke sini atau klik untuk memilih</p>
+                                <p class="small text-muted mt-1">JPG, PNG, atau PDF · maks 2 MB</p>
+                            </div>
+                            <img id="previewBuktiImg" src="" alt="Pratinjau bukti" class="d-none mt-2 rounded-2" style="max-height: 140px; max-width: 100%;">
+                        </div>
+                        <div class="invalid-feedback d-none" id="buktiError"></div>
                     </div>
-                    <button type="submit" class="btn btn-aksi"><i class="bi bi-paperclip me-1"></i>Kirim Bukti</button>
+                    <button type="submit" class="btn btn-aksi" id="btnKirimBukti"><i class="bi bi-paperclip me-1"></i>Kirim Bukti</button>
                 </form>
                 <?php endif; ?>
 
                 <?php if ($pembayaran): ?>
-                <div class="pembayaran-info">
+                <div class="pembayaran-info mt-3">
                     <h6 class="mb-2">Status Berkas Anda</h6>
                     <ul class="list-unstyled small">
                         <li><strong>File bukti:</strong> <?php echo e(basename($pembayaran['bukti_file'])); ?> · diunggah <?php echo date('d M Y, H:i', $pembayaran['uploaded_at']); ?> WIB</li>
@@ -280,7 +322,7 @@ require __DIR__ . '/../includes/header.php';
 
     <!-- Aksi samping -->
     <div class="col-lg-4 col-xl-3">
-        <div class="card border-0 shadow-sm sticky-top" style="top:100px;">
+        <div class="card border-0 shadow-sm sticky-aksi" style="top:100px;">
             <div class="card-body">
                 <h3 class="h6 card-subtitle">Aksi</h3>
                 <?php if ($bisaBatalkan): ?>
@@ -296,19 +338,19 @@ require __DIR__ . '/../includes/header.php';
 </div>
 
 <!-- Modal konfirmasi batalkan -->
-<div class="modal fade" id="modalBatalkan" tabindex="-1" aria-hidden="true" aria-hidden="true">
+<div class="modal fade" id="modalBatalkan" tabindex="-1" aria-hidden="true" aria-labelledby="modalBatalkanLabel">
     <div class="modal-dialog">
         <form method="post" action="booking_detail.php?id=<?php echo $bookingId; ?>">
             <?php echo csrf_field(); ?>
             <input type="hidden" name="action" value="batalkan">
             <div class="modal-content">
                 <div class="modal-header bg-lightest">
-                    <h5 class="modal-title">Batalkan Booking?</h5>
+                    <h5 class="modal-title" id="modalBatalkanLabel">Batalkan Booking?</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
                 <div class="modal-body">
                     <p>Yakin ingin membatalkan booking <strong><?php echo e($booking['kode']); ?></strong> di <?php echo e($booking['nama_lapangan']); ?>?</p>
-                    <p class="small text-muted">Booking yang sudah diterima tidak dapat dibatalkan di sini.</p>
+                    <p class="small text-muted">Booking yang sudah dikonfirmasi tidak dapat dibatalkan di sini.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-aksi" data-bs-dismiss="modal">Tidak</button>
@@ -319,4 +361,85 @@ require __DIR__ . '/../includes/header.php';
     </div>
 </div>
 
+<!-- Toast notifikasi -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
 <?php require __DIR__ . '/../includes/footer.php'; ?>
+
+<script>
+/* Hitung mundur batas pembayaran */
+(function () {
+    var el = document.getElementById('hitung-mundur');
+    if (!el) { return; }
+    var total = parseInt(el.getAttribute('data-detik'), 10) || 0;
+    function fmt(s) {
+        var h = Math.floor(s / 3600);
+        var m = Math.floor((s % 3600) / 60);
+        var d = s % 60;
+        return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (d < 10 ? '0' : '') + d;
+    }
+    function aktual() {
+        if (total <= 0) {
+            el.textContent = 'Waktu habis';
+            el.classList.add('text-danger');
+            el.parentElement.querySelector('.small') && (el.parentElement.querySelector('.small').textContent = 'Batas pembayaran telah lewat.');
+            return;
+        }
+        el.textContent = fmt(total);
+        total--;
+    }
+    aktual();
+    setInterval(aktual, 1000);
+})();
+
+/* Salin nomor rekening ke clipboard + toast */
+(function () {
+    var btn = document.getElementById('btnSalin');
+    var rekening = btn ? btn.getAttribute('data-salin') : null;
+    if (!btn || !rekening) { return; }
+    btn.addEventListener('click', function () {
+        navigator.clipboard.writeText(rekening).then(function () {
+            tampilkanToast('Nomor rekening disalin: ' + rekening, 'success');
+        });
+    });
+})();
+
+/* Pratinjau gambar bukti saat dipilih */
+function previewBukti(input) {
+    var dropzone = document.getElementById('dropzoneBukti');
+    var ikon = document.getElementById('dropzoneIkon');
+    var img = document.getElementById('previewBuktiImg');
+    var file = input && input.files && input.files[0];
+    if (!file) { return; }
+    var url = URL.createObjectURL(file);
+    img.src = url;
+    img.classList.remove('d-none');
+    if (ikon) { ikon.style.display = 'none'; }
+    if (dropzone) { dropzone.classList.add('kotak-terisi'); }
+}
+
+/* Toast sederhana */
+function tampilkanToast(pesan, jenis) {
+    var container = document.getElementById('toastContainer');
+    if (!container) { return; }
+    var el = document.createElement('div');
+    el.className = 'toast-lapanganku align-items-center text-white border-0 ' + (jenis === 'success' ? 'bg-success' : 'bg-danger');
+    el.setAttribute('role', 'alert');
+    el.setAttribute('aria-live', 'assertive');
+    el.innerHTML = '<div class="d-flex"><div class="toast-body">' + pesan + '</div><button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="toast" aria-label="Tutup"></button></div>';
+    container.appendChild(el);
+    var bsToast = new bootstrap.Toast(el, { autohide: true, delay: 4000 });
+    bsToast.show();
+    el.addEventListener('hidden.bs.toast', function () { el.remove(); });
+}
+</script>
+
+<style>
+/* Khusus halaman ini */
+.btn-salin { font-size: 0.85rem; padding: 0.25rem 0.6rem; }
+.stepper-item.gagal .step-ball { background: var(--warna-bahaya); border-color: var(--warna-bahaya); color: #fff; }
+.stepper-item.gagal .step-ball i { color: #fff; }
+.stepper-item.gagal .step-label { color: var(--warna-bahaya); }
+.kotak-terisi { background: #f0fdf4 !important; border-color: var(--warna-primer) !important; }
+.sticky-aksi { position: sticky; top: 100px; }
+</style>
