@@ -222,7 +222,7 @@ require __DIR__ . '/../includes/header.php';
             </td>
             <td class="align-middle">
                 <div class="btn-group-vertical btn-group-sm d-grid w-100">
-                    <?php if ($booking['status'] ?? null): ?>
+                    <?php if ($b['status'] ?? null): ?>
                     <?php if ($b['status'] === 'menunggu_verifikasi' || $b['status'] === 'menunggu_pembayaran'): ?>
                     <button class="btn btn-aksi" data-bs-toggle="modal" data-bs-target="#modalVerifikasi<?php echo (int)$b['id']; ?>">
                         Verifikasi

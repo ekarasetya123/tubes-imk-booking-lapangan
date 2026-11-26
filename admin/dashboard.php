@@ -105,7 +105,7 @@ require __DIR__ . '/../includes/header.php';
             <table class="table table-hover align-middle table-booking">
                 <thead>
                 <tr>
-                    <th>Kode</th><th>Penyewa</th><th>Lapangan</th><th>Tanggal &amp; Waktu</th><th>Total</th><th>Aksi</th>
+                    <th>Kode</th><th>Penyewa</th><th>Lapangan</th><th>Tanggal &amp; Waktu</th><th>Total</th><th>Batas Bayar</th><th>Aksi</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -116,6 +116,14 @@ require __DIR__ . '/../includes/header.php';
                     <td><?php echo e($b['nama_lapangan']); ?></td>
                     <td><?php echo format_tanggal($b['tanggal']); ?> · <?php echo format_jam($b['jam_mulai']); ?>–<?php echo format_jam($b['jam_selesai']); ?></td>
                     <td><strong><?php echo rupiah($b['total_harga']); ?></strong></td>
+                    <td>
+                        <?php if ($b['status'] === 'menunggu_pembayaran'): ?>
+                        <div class="small text-muted" style="line-height:1.2;">Batas pembayaran</div>
+                        <div class="fw-semibold text-danger hitung-mundur-verif" data-detik="<?php echo (int) sisa_detik_batas_bayar($b['batas_bayar']); ?>">--:--:--</div>
+                        <?php else: ?>
+                        <span class="badge badge-ringkasan">Siap diverifikasi</span>
+                        <?php endif; ?>
+                    </td>
                     <td><a href="<?php echo BASE_URL; ?>/../admin/booking.php" class="btn btn-sm btn-outline-aksi">Verifikasi</a></td>
                 </tr>
                 <?php endforeach; ?>
@@ -162,3 +170,32 @@ require __DIR__ . '/../includes/header.php';
 <?php endif; ?>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>
+
+<script>
+(function () {
+    document.querySelectorAll('.hitung-mundur-verif').forEach(function (el) {
+        var total = parseInt(el.getAttribute('data-detik'), 10) || 0;
+        function fmt(s) {
+            var h = Math.floor(s / 3600);
+            var m = Math.floor((s % 3600) / 60);
+            var d = s % 60;
+            return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (d < 10 ? '0' : '') + d;
+        }
+        function aktual() {
+            if (total <= 0) {
+                el.textContent = 'Waktu habis';
+                el.classList.add('text-danger');
+                return;
+            }
+            el.textContent = fmt(total);
+            total--;
+        }
+        aktual();
+        setInterval(aktual, 1000);
+    });
+})();
+</script>
+
+<style>
+.hitung-mundur-verif { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9rem; }
+</style>
