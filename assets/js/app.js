@@ -99,7 +99,10 @@ document.addEventListener('DOMContentLoaded', function () {
       var spinner = btn.querySelector('.spinner-border');
       if (teks) teks.classList.add('d-none');
       if (spinner) spinner.classList.remove('d-none');
-      btn.disabled = true;
+      // Nonaktifkan TAMBAHAN setelah browser mulai mengirim form, agar tombol submit itself
+      // tetap ikut terkirim (elemen disabled tidak ikut dalam POST). Elemen disabled tidak
+      // perlu ikut terkirim karena PHP mengecek REQUEST_METHOD, bukan nama tombol.
+      setTimeout(function () { btn.disabled = true; }, 0);
     });
   });
 
