@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             set_flash('success', 'Selamat datang kembali, ' . current_user()['nama'] . '!');
             // Arahkan ke URL kembali (hanya path internal) atau dashboard peran
             if ($kembali && str_starts_with($kembali, '/')) {
-                redirect(BASE_URL . '/..' . $kembali);
+                redirect(BASE_URL . $kembali);
             }
             $u = current_user();
             $tujuan = $u['role'] === 'admin' ? '/../admin/dashboard.php'
