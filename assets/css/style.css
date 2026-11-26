@@ -280,7 +280,7 @@ button:disabled { opacity: 0.7; cursor: not-allowed; }
 }
 .slot:hover:not(:disabled) { border-color: var(--warna-primer); background: rgba(14,124,91,0.06); transform: scale(1.03); z-index: 2; }
 .slot-tersedia { color: var(--warna-primer); }
-.slot-terisi { background: #f4f5f7; border-color: #d1d5db; color: var(--tekst-abelik : #9ca3af); cursor: not-allowed; color: #9ca3af; }
+.slot-terisi { background: #f4f5f7; border-color: #d1d5db; color: #9ca3af; cursor: not-allowed; }
 .slot-terisi .slot-jam { color: #6b7280; }
 .slot-terisi .slot-status i { color: #9ca3af; }
 .slot-lewat { background: #f9f2f0; border-color: #e7a79a; color: #dc2626; cursor: not-allowed; }
