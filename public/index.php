@@ -7,8 +7,16 @@ require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/auth.php';
 
 $lapanganAktif = db()->query(
-    "SELECT * FROM lapangan WHERE status = 'aktif' ORDER BY jenis, harga_per_jam"
+    "SELECT * FROM lapangan WHERE status = 'aktif' ORDER BY jenis, nama"
 )->fetchAll();
+
+// Hitung statistik untuk panel ringkasan hero
+$totalLapangan = count($lapanganAktif);
+$hargaMulai = null;
+foreach ($lapanganAktif as $l) {
+    $h = (float)$l['harga_per_jam'];
+    if ($hargaMulai === null || $h < $hargaMulai) { $hargaMulai = $h; }
+}
 
 $title = 'Beranda';
 $active = 'beranda';
@@ -34,13 +42,16 @@ require __DIR__ . '/../includes/header.php';
             </div>
             <div class="col-lg-5 d-none d-lg-block">
                 <div class="hero-card">
-                    <div class="hero-card-icon"><i class="bi bi-trophy"></i></div>
-                    <p class="hero-card-angka"><?php echo count($lapanganAktif); ?>+</p>
+                    <img src="<?php echo BASE_URL; ?>/../assets/img/illust-lapangan.svg" class="img-fluid rounded-3 mb-3" alt="Illustrasi lapangan futsal dan badminton" style="max-height: 120px;">
+                    <p class="hero-card-angka"><?php echo $totalLapangan; ?>+</p>
                     <p class="hero-card-label">lapangan aktif siap dibooking hari ini</p>
+                    <?php if ($hargaMulai !== null): ?>
                     <div class="hero-card-strip">
-                        <span><i class="bi bi-circle-fill lap-futsal"></i> Futsal</span>
-                        <span><i class="bi bi-circle-fill lap-badminton"></i> Badminton</span>
+                        <span><i class="bi bi-tag-fill lap-futsal" aria-hidden="true"></i> Harga mulai <?php echo rupiah($hargaMulai); ?> / jam</span>
+                        <span class="lap-futsal"><i class="bi bi-circle-fill lap-futsal" aria-hidden="true"></i> Futsal</span>
+                        <span class="lap-badminton"><i class="bi bi-circle-fill lap-badminton" aria-hidden="true"></i> Badminton</span>
                     </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -61,7 +72,7 @@ require __DIR__ . '/../includes/header.php';
         <div class="col-md-6 col-lg-3">
             <article class="card-lapangan h-100">
                 <div class="card-lapangan-visual lap-<?php echo e($l['jenis']); ?>">
-                    <i class="bi <?php echo $l['jenis'] === 'futsal' ? 'bi-dribbble' : 'bi-feather'; ?>" aria-hidden="true"></i>
+                    <img src="<?php echo BASE_URL; ?>/../assets/img/<?php echo $l['jenis'] === 'futsal' ? 'bola-sepak.svg' : 'shuttlecock-raket.svg'; ?>" alt="<?php echo ucfirst($l['jenis']); ?>" style="max-height: 44px; width: auto;">
                     <span class="badge-jenis"><?php echo e(ucfirst($l['jenis'])); ?></span>
                 </div>
                 <div class="card-lapangan-body">

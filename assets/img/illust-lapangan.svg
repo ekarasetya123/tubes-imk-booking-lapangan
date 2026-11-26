@@ -1,0 +1,25 @@
+<!-- Ilustrasi lapangan olahraga hero kustom (lapangan futsal + badminton) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" aria-label="Lapangan futsal dan badminton">
+  <defs>
+    <linearGradient id="lapGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0e7c5b"/>
+      <stop offset="50%" stop-color="#15803d"/>
+      <stop offset="100%" stop-color="#0e7c5b"/>
+    </linearGradient>
+  </defs>
+  <!-- Latar lapangan -->
+  <rect width="200" height="70" fill="url(#lapGrad)" rx="12"/>
+  <!-- Garis lapangan futsal -->
+  <path d="M 20 10 h 160 v 50 H 20 Z" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+  <line x1="100" y1="10" x2="100" y2="60" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+  <circle cx="100" cy="35" r="10" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+  <!-- Bola futsal kecil -->
+  <circle cx="100" cy="48" r="5" fill="#ffffff" stroke="#d1d5db" stroke-width="1"/>
+  <!-- Kotak badminton (di kanan) -->
+  <rect x="140" y="80" width="50" height="30" fill="#fbbf24" rx="4"/>
+  <line x1="150" y1="80" x2="150" y2="110" stroke="#c2410c" stroke-width="2"/>
+  <ellipse cx="150" cy="95" rx="4" ry="3" fill="#fca5a5" stroke="#ef4444" stroke-width="1.5"/>
+  <!-- Raket kecil -->
+  <path d="M 165 110 Q 165 85 180 78 L 186 82 Q 195 88 195 110 Q 195 130 165 110 Z" fill="none" stroke="#c9751e" stroke-width="2.5"/>
+  <path d="M 175 90 Q 180 96 175 102 Q 170 96 175 90 Z" fill="#4ade80" stroke="#15803d" stroke-width="1.5"/>
+</svg>
