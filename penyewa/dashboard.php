@@ -1,6 +1,8 @@
 <?php
 /**
  * penyewa/dashboard.php — ringkasan booking aktif & terdekat bagi penyewa.
+ * Poles UI/UX (PROMPT 2): kartu booking berikutnya dengan hitung mundur,
+ * tombol "Booking lagi", dan empty state ramah.
  */
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/helpers.php';
@@ -23,10 +25,10 @@ $aktif = $stmt->fetchAll();
 
 // Booking terdekat yang masih aktif
 $terdekat = null;
-$now = date('Y-m-d H:i:s');
+$now = date('Y-m-d H:i:00');
 foreach ($aktif as $b) {
     $mulai = $b['tanggal'] . ' ' . $b['jam_mulai'];
-    if ($mulai >= date('Y-m-d H:i:00') || $b['status'] !== 'dikonfirmasi') {
+    if ($mulai >= $now || $b['status'] !== 'dikonfirmasi') {
         if (!$terdekat || $mulai < $terdekat['tanggal'] . ' ' . $terdekat['jam_mulai']) {
             $terdekat = $b;
         }
@@ -75,10 +77,26 @@ require __DIR__ . '/../includes/header.php';
                 <i class="bi bi-calendar3 me-1"></i><?php echo format_tanggal($terdekat['tanggal']); ?>
                 · <i class="bi bi-clock me-1"></i><?php echo format_jam($terdekat['jam_mulai']); ?>–<?php echo format_jam($terdekat['jam_selesai']); ?>
             </p>
+            <?php if ($terdekat['status'] === 'menunggu_pembayaran'): ?>
+            <div class="mt-2">
+                <div class="small text-muted">Batas pembayaran</div>
+                <div class="fs-6 fw-bold text-danger" id="hitungMundurTerdekat" data-detik="<?php echo (int) sisa_detik_batas_bayar($terdekat['batas_bayar']); ?>">--:--:--</div>
+            </div>
+            <?php endif; ?>
         </div>
         <?php [$teks, $kelas, $ikon] = status_booking_label($terdekat['status']); ?>
-        <span class="badge-status badge-<?php echo e($kelas); ?>"><i class="bi <?php echo e($ikon); ?>"></i> <?php echo e($teks); ?></span>
+        <div class="d-flex flex-column gap-2">
+            <span class="badge-status badge-<?php echo e($kelas); ?>"><i class="bi <?php echo e($ikon); ?>"></i> <?php echo e($teks); ?></span>
+            <a href="<?php echo BASE_URL; ?>/../penyewa/booking_detail.php?id=<?php echo (int)$terdekat['id']; ?>" class="btn btn-outline-aksi btn-sm">Lihat Detail <i class="bi bi-arrow-right"></i></a>
+        </div>
     </div>
+</div>
+<?php else: ?>
+<div class="empty-state text-center py-5">
+    <i class="bi bi-calendar2-x display-4 text-muted"></i>
+    <p class="mt-3 mb-1 fw-semibold">Belum ada booking aktif</p>
+    <p class="text-muted small">Pilih jadwal kosong lalu buat booking pertama Anda.</p>
+    <a href="<?php echo BASE_URL; ?>/jadwal.php" class="btn btn-aksi mt-2">Booking Sekarang <i class="bi bi-arrow-right"></i></a>
 </div>
 <?php endif; ?>
 
@@ -111,8 +129,38 @@ require __DIR__ . '/../includes/header.php';
     <i class="bi bi-calendar2-x display-4 text-muted"></i>
     <p class="mt-3 mb-1 fw-semibold">Belum ada booking aktif</p>
     <p class="text-muted small">Pilih jadwal kosong lalu buat booking pertama Anda.</p>
-    <a href="<?php echo BASE_URL; ?>/jadwal.php" class="btn btn-aksi mt-2">Lihat Jadwal</a>
+    <a href="<?php echo BASE_URL; ?>/jadwal.php" class="btn btn-aksi mt-2">Booking Sekarang <i class="bi bi-arrow-right"></i></a>
 </div>
 <?php endif; ?>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>
+
+<script>
+(function () {
+    var el = document.getElementById('hitungMundurTerdekat');
+    if (!el) { return; }
+    var total = parseInt(el.getAttribute('data-detik'), 10) || 0;
+    function fmt(s) {
+        var h = Math.floor(s / 3600);
+        var m = Math.floor((s % 3600) / 60);
+        var d = s % 60;
+        return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (d < 10 ? '0' : '') + d;
+    }
+    function aktual() {
+        if (total <= 0) {
+            el.textContent = 'Waktu habis';
+            el.classList.add('text-danger');
+            return;
+        }
+        el.textContent = fmt(total);
+        total--;
+    }
+    aktual();
+    setInterval(aktual, 1000);
+})();
+</script>
+
+<style>
+.card-terdekat .badge-status { font-size: 0.85rem; }
+.card-terdekat .btn-outline-aksi { font-size: 0.85rem; }
+</style>
