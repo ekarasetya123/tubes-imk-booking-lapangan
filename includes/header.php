@@ -24,6 +24,7 @@ $BASE = BASE_URL; // BASE_URL berakhir tanpa slash, URL halaman ada di /public
     <link href="<?php echo $BASE; ?>/../assets/css/style.css" rel="stylesheet">
 </head>
 <body class="<?php echo e($body_class ?? ''); ?>">
+<a href="#main-content" class="skip-to-content">Lewati ke konten utama</a>
 <nav class="navbar navbar-expand-lg navbar-lapanganku sticky-top" aria-label="Navigasi utama">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center gap-2" href="<?php echo $BASE; ?>/index.php">
@@ -88,6 +89,6 @@ $BASE = BASE_URL; // BASE_URL berakhir tanpa slash, URL halaman ada di /public
         </div>
     </div>
 </nav>
-<main class="main-content">
+<main id="main-content" class="main-content">
 <div class="container py-4">
 <?php require __DIR__ . '/flash.php'; ?>

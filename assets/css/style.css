@@ -37,6 +37,24 @@
 
 html { scroll-behavior: smooth; }
 
+/* Skip-to-content: hanya terlihat saat difokus via keyboard */
+.skip-to-content {
+  position: absolute;
+  top: -10000px;
+  left: 0;
+  right: 0;
+  background: var(--warna-primer);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  z-index: 9999;
+  font-weight: 600;
+  text-align: center;
+}
+.skip-to-content:focus {
+  top: 0;
+  outline: none;
+}
+
 body {
   background: var(--warna-bg);
   color: var(--warna-tekst);
