@@ -136,7 +136,7 @@ require __DIR__ . '/../includes/header.php';
 <div class="empty-state text-center py-5">
     <i class="bi bi-clock-history display-4 text-muted"></i>
     <p class="mt-3 mb-1 fw-semibold">Belum ada booking</p>
-    <p class="text-muted small"><?php echo $filterStatus !== '' || $q !== '' ? 'Coba ubah filter atau kata kunci pencarian.' : 'Mulai booking lapangan favorit Anda now.'; ?></p>
+    <p class="text-muted small"><?php echo $filterStatus !== '' || $q !== '' ? 'Coba ubah filter atau kata kunci pencarian.' : 'Mulai booking lapangan favorit Anda sekarang.'; ?></p>
     <a href="<?php echo BASE_URL; ?>/jadwal.php" class="btn btn-aksi mt-2">Lihat Jadwal</a>
 </div>
 <?php endif; ?>

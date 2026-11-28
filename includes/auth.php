@@ -38,13 +38,21 @@ function require_login(): void
 }
 
 /** Wajibkan salah satu peran yang diizinkan. */
+/** Wajibkan salah satu peran yang diizinkan. */
 function require_role(string ...$roles): void
 {
     require_login();
     $user = current_user();
     if (!$user || !in_array($user['role'], $roles, true)) {
-        set_flash('danger', 'Anda tidak memiliki hak akses ke halaman tersebut.');
-        redirect(BASE_URL . '/index.php');
+        $dashboard_per_role = [
+            'admin'    => BASE_URL . '/../admin/dashboard.php',
+            'pemilik'  => BASE_URL . '/../pemilik/laporan.php',
+            'penyewa'  => BASE_URL . '/../penyewa/dashboard.php',
+        ];
+        $role = $user['role'] ?? null;
+        $tujuan = $dashboard_per_role[$role] ?? BASE_URL . '/index.php';
+        set_flash('danger', 'Anda tidak memiliki hak akses ke halaman tersebut. Dialihkan ke dashboard ' . $role . '.');
+        redirect($tujuan);
     }
 }
 

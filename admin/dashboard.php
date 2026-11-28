@@ -14,7 +14,7 @@ $today = date('Y-m-d');
 $bulanIni = date('Y-m');
 
 // Statistik kartu
-$totalHariIni = (int)db()->query(
+$totalHariIni = (int)db_query(
     "SELECT COUNT(*) FROM booking WHERE tanggal = ?", [$today]
 )->fetchColumn();
 
@@ -22,7 +22,7 @@ $menungguVerifikasi = (int)db()->query(
     "SELECT COUNT(*) FROM booking WHERE status = 'menunggu_verifikasi'"
 )->fetchColumn();
 
-$pendapatanBulan = (float)db()->query(
+$pendapatanBulan = (float)db_query(
     "SELECT COALESCE(SUM(total_harga),0) FROM booking
      WHERE status = 'dikonfirmasi' AND DATE_FORMAT(created_at, '%Y-%m') = ?",
     [$bulanIni]

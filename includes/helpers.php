@@ -118,3 +118,11 @@ function status_booking_label(string $status): array
     $default = [$status, 'secondary', 'bi-circle'];
     return $map[$status] ?? $default;
 }
+
+/** Jalankan query dengan parameter aman via PDO prepare+execute. Mengembalikan PDOStatement. */
+function db_query(string $sql, array $params = []): \PDOStatement
+{
+    $stmt = db()->prepare($sql);
+    $stmt->execute($params);
+    return $stmt;
+}

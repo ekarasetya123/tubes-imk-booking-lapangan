@@ -122,7 +122,7 @@ body {
   background: var(--warna-primer);
   color: #fff !important;
 }
-.btn-ahaya {
+.btn-bahaya {
   background: #f4f6f5;
   color: var(--warna-tekst-redup);
   border: 1px solid #dee2e6;
@@ -130,10 +130,10 @@ body {
   border-radius: var(--radius-tombol);
   transition: var(--transisi);
 }
-.btn-ahaya:hover:not(.disabled) {
-  background: var(--warna-primer);
+.btn-bahaya:hover:not(.disabled) {
+  background: var(--warna-bahaya);
   color: #fff;
-  border-color: var(--warna-primer);
+  border-color: var(--warna-bahaya);
 }
 
 /* Tombol submition loading state */

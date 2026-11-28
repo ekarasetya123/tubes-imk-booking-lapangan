@@ -326,7 +326,7 @@ require __DIR__ . '/../includes/header.php';
             <div class="card-body">
                 <h3 class="h6 card-subtitle">Aksi</h3>
                 <?php if ($bisaBatalkan): ?>
-                <button class="btn btn-ahaya w-100 mb-2" data-bs-toggle="modal" data-bs-target="#modalBatalkan" title="Batalkan booking ini">
+                <button class="btn btn-bahaya w-100 mb-2" data-bs-toggle="modal" data-bs-target="#modalBatalkan" title="Batalkan booking ini">
                     <i class="bi bi-trash3 me-1"></i>Batalkan Booking
                 </button>
                 <?php else: ?>
@@ -354,7 +354,7 @@ require __DIR__ . '/../includes/header.php';
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-aksi" data-bs-dismiss="modal">Tidak</button>
-                    <button type="submit" class="btn btn-ahaya">Ya, Batalkan</button>
+                    <button type="submit" class="btn btn-bahaya">Ya, Batalkan</button>
                 </div>
             </div>
         </form>

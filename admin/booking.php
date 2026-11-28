@@ -229,7 +229,7 @@ require __DIR__ . '/../includes/header.php';
                     </button>
                     <?php endif; ?>
                     <?php if ($b['status'] === 'menunggu_verifikasi' || $b['status'] === 'menunggu_pembayaran'): ?>
-                    <button class="btn btn-ahaya" data-bs-toggle="modal" data-bs-target="#modalTolak<?php echo (int)$b['id']; ?>">
+                    <button class="btn btn-bahaya" data-bs-toggle="modal" data-bs-target="#modalTolak<?php echo (int)$b['id']; ?>">
                         Tolak
                     </button>
                     <?php endif; ?>
@@ -311,7 +311,7 @@ require __DIR__ . '/../includes/header.php';
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-outline-aksi" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-ahaya">Ya, Tolak</button>
+                            <button type="submit" class="btn btn-bahaya">Ya, Tolak</button>
                         </div>
                     </div>
                 </form>

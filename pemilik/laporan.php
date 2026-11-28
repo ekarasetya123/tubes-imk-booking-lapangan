@@ -34,17 +34,17 @@ if ($lapanganFilter !== '') {
 $sqlWhere = implode(' AND ', $where);
 
 // Kartu statistik
-$totalPendapatan = (float)db()->query(
+$totalPendapatan = (float)db_query(
     "SELECT COALESCE(SUM(total_harga),0) FROM booking WHERE $sqlWhere",
     $params
 )->fetchColumn();
 
-$jumlahBooking = (int)db()->query(
+$jumlahBooking = (int)db_query(
     "SELECT COUNT(*) FROM booking WHERE $sqlWhere",
     $params
 )->fetchColumn();
 
-$jamTerpakai = (int)db()->query(
+$jamTerpakai = (int)db_query(
     "SELECT COALESCE(SUM(durasi),0) FROM booking WHERE $sqlWhere",
     $params
 )->fetchColumn();

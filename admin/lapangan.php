@@ -85,7 +85,7 @@ require __DIR__ . '/../includes/header.php';
             <td class="align-middle">
                 <a href="<?php echo BASE_URL; ?>/../admin/lapangan_form.php?id=<?php echo (int)$l['id']; ?>" class="btn btn-sm btn-outline-aksi">Ubah</a>
                 <?php if ($l['status'] === 'aktif'): ?>
-                <button class="btn btn-sm btn-ahaya" data-bs-toggle="modal" data-bs-target="#modalNonaktif<?php echo (int)$l['id']; ?>">
+                <button class="btn btn-sm btn-bahaya" data-bs-toggle="modal" data-bs-target="#modalNonaktif<?php echo (int)$l['id']; ?>">
                     Nonaktifkan
                 </button>
                 <?php endif; ?>
@@ -109,7 +109,7 @@ require __DIR__ . '/../includes/header.php';
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-outline-aksi" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-ahaya">Ya, Nonaktifkan</button>
+                            <button type="submit" class="btn btn-bahaya">Ya, Nonaktifkan</button>
                         </div>
                     </div>
                 </form>
