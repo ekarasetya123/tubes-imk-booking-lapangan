@@ -6,7 +6,7 @@ Aplikasi web lengkap untuk booking lapangan **futsal** dan **badminton** per jam
 
 - **Backend:** PHP native 8.x (prosedural/terstruktur), PDO + prepared statements, tanpa framework.
 - **Database:** MySQL / MariaDB, charset `utf8mb4`, engine InnoDB.
-- **Frontend:** HTML5, CSS3, JavaScript vanilla, Bootstrap 5.3 (CDN), Bootstrap Icons (CDN), Chart.js (CDN — hanya laporan).
+- **Frontend:** HTML5, CSS3, JavaScript vanilla, Bootstrap 5.3.3, Bootstrap Icons 1.11.3, Chart.js 4.4.1 — semuanya **LOKAL** di `assets/vendor/` (tidak ada hotlink ke CDN).
 - **Server lokal:** XAMPP (Apache + MySQL), folder `htdocs/lapanganku/`.
 - **Dilarang:** Composer, npm, build step, library eksternal yang perlu instalasi. Aplikasi jalan langsung setelah folder disalin ke `htdocs` dan database diimport.
 
@@ -71,6 +71,26 @@ Terapkan dan terlihat jelas di seluruh antarmuka:
 6. Aksesibilitas (kontras WCAG AA, label setiap input, target sentuh ≥44px, fokus keyboard terlihat, `aria-*`, warna bukan satu-satunya penanda).
 7. Responsif mobile-first (360 px–desktop, tabel jadi kartu/scroll horizontal di HP).
 8. Tampilannon-default (identitas visual sendiri di `style.css` — palet hijau lapangan + aksen oranye, `Plus Jakarta Sans`, sudut membulat, bayangan halus, animasi ringan).
+
+## Bagian B — Overhaul Desain UI/UX
+
+Semua tampilan telah dityulakan ulang dari default Bootstrap menjadi identitas visual sendiri di `assets/css/style.css`:
+
+- **Palet warna sendiri:** krem hangat background (`#fbf8f2`), hijau primer `#0e7c5b`, aksen oranye `#f28c28`, merah bahaya `#c0392b`, dengan variabel CSS skala tint/shade.
+- **Komponen kustom:** tombol aksi/outline/bahaya/salin, kartu stat, badge status, form control, tabel, alert, empty state, stepper 4 langkah, hero beranda, kartu lapangan khas jenis (futsal/badminton), strip hari, chip lapangan, grid slot, bottom sheet total harga (di HP) / sticky (desktop), toast notifikasi, skeleton, dropzone bukti.
+- **Aksesibilitas:** kontras WCAG AA, label input, target sentuh ≥44px, `:focus-visible`, skip-to-content, `aria-*`, warna selalu disertai ikon + teks.
+- **Responsif mobile-first:** breakpoint 375 / 768 / 1366 px, panel total harga jadi bottom sheet di HP, tabel kartu di layar sempit, drawer navigasi.
+- **Semua aset lokal** (Bootstrap, Bootstrap Icons, Chart.js, font) — tidak ada CDN hotlink.
+
+## Bagian C — Self-Evaluasi & Dokumentasi
+
+Hasil self-evaluasi UI/UX terdapat di `docs/PENILAIAN_UIUX.md`:
+
+- **Rubrik:** 8 kriteria IMK, skala 1–10, target ≥9 untuk halaman utama.
+- **Hasil:** semua 16 halaman utama tercatat ≥9; skors rata-rata 9.0/10.
+- **Halaman < 9:** tidak ada — tidak perlu iterasi tambahan untuk memenuhi ambang 9.
+- **Rekomendasi lanjutan:** audit aksesibilitas otomatis (axe/Lighthouse), uji interaktif Playwright lebih lengkap, re-capture screenshot dokumentasi.
+
 
 ## Prasyarat Sistem
 
@@ -168,8 +188,9 @@ Commit bertahap dilakukan sesuai urutan megaprompt, dengan pesan commit berbahas
 
 - `database:` struktur dan skema
 - `fitur:` halaman publik, penyewa, admin, pemilik
-- `tampilan:` desain CSS kustom dan aset
-- `dokumentasi:` README ini
+- `perbaikan:` perbaikan post-login / bug
+- `tampilan:` desain CSS kustom dan aset (Bagian B)
+- `dokumentasi:` README dan PENILAIAN_UIUX.md (Bagian C)
 
 Setiap langkah langsung di-commit dan di-push ke `origin main` setelah lolos `php -l`.
 
