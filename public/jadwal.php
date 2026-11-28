@@ -19,7 +19,7 @@ for ($i = 0; $i < 14; $i++) {
     $hariStrip[] = [
         'tanggal' => $t,
         'nama'    => date('l', strtotime($t)),
-        'angka'   => date('d', strtotime($t)),
+        'angka'   => (int)date('d', strtotime($t)),
         'bulan'   => date('M', strtotime($t)),
         'ini'     => $t === date('Y-m-d'),
     ];
@@ -135,8 +135,9 @@ require __DIR__ . '/../includes/header.php';
 <div class="hari-strip mb-4" role="group" aria-label="Pilih tanggal">
     <?php foreach ($hariStrip as $h): ?>
     <a href="jadwal.php?lapangan=<?php echo $lapanganId; ?>&tanggal=<?php echo $h['tanggal']; ?>"
-       class="hari-chip <?php echo $h['ini'] ? 'aktif' : ''; ?> <?php echo $h['tanggal'] === $tanggal ? 'aktif' : ''; ?>"
-       title="<?php echo e($h['nama_id']); ?>, <?php echo e($h['tanggal']); ?>">
+       class="hari-chip <?php echo $h['tanggal'] === $tanggal ? 'aktif' : ''; ?>"
+       title="<?php echo e($h['nama_id']); ?>, <?php echo e($h['tanggal']); ?>"
+       aria-current="<?php echo $h['tanggal'] === $tanggal ? 'page' : 'false'; ?>">
         <span class="hari-angka"><?php echo $h['angka']; ?></span>
         <span class="hari-nama"><?php echo e($h['nama_id']); ?></span>
     </a>
@@ -163,7 +164,7 @@ require __DIR__ . '/../includes/header.php';
             <span><span class="kotak-warna kotak-tersedia" aria-hidden="true"></span> Tersedia</span>
             <span><span class="kotak-warna kotak-terisi" aria-hidden="true"></span> Terisi</span>
             <span><span class="kotak-warna kotak-dipilih" aria-hidden="true"></span> Dipilih</span>
-            <span class="text-muted"><span class="kotak-warna kotak-terisi" style="background:#e7a79a" aria-hidden="true"></span> Lewat</span>
+            <span class="text-muted"><span class="kotak-warna" style="background:#e7a79a" aria-hidden="true"></span> Lewat</span>
         </div>
     </div>
 
@@ -198,8 +199,8 @@ require __DIR__ . '/../includes/header.php';
         </div>
     </form>
 
-    <!-- RINGKASAN PILIHAN (sticky desktop / bottom sheet HP) -->
-    <div class="ringkasan-pilihan mt-3 panel-total-sticky" id="ringkasan-pilihan" aria-live="polite">
+    <!-- RINGKASAN PILIHAN (bottom sheet di HP, sticky di desktop) -->
+    <div class="ringkasan-pilihan mt-3 panel-total-bottom" id="ringkasan-pilihan" aria-live="polite">
         <div class="card ringkasan-card">
             <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3">
                 <div>
@@ -226,19 +227,52 @@ require __DIR__ . '/../includes/header.php';
 <?php require __DIR__ . '/../includes/footer.php'; ?>
 
 <script>
-/* Tambahan interaksi strip hari & chip lapangan (navigasi tanpa reload jika diinginkan) */
-document.addEventListener('DOMContentLoaded', function () {
-    // Sorot hari-chip yang aktif berdasarkan URL
-    document.querySelectorAll('.hari-chip').forEach(function (chip) {
-        if (chip.classList.contains('aktif')) {
-            chip.setAttribute('aria-current', 'page');
-        }
-    });
-    document.querySelectorAll('.chip-lapangan').forEach(function (chip) {
-        if (chip.classList.contains('aktif')) {
-            chip.setAttribute('aria-current', 'location');
-        }
-    });
-});
-</script>
+/* Slot pilihan + ringkasan harga real-time */
+(function () {
+    var form = document.getElementById('form-slot');
+    var grid = document.querySelector('.slot-grid');
+    var slots = grid ? grid.querySelectorAll('.slot') : [];
+    var hargaPerJam = parseFloat(form ? form.getAttribute('data-harga') : 0) || 0;
+    var jamInput = document.getElementById('jam-dipilih');
+    var teksEl = document.getElementById('ringkasan-teks');
+    var totalEl = document.getElementById('ringkasan-harga');
+    var btn = document.getElementById('btn-booking');
+    var dipilih = [];
 
+    function perbarui() {
+        if (jamInput) jamInput.value = dipilih.join(',');
+        if (teksEl) {
+            teksEl.textContent = dipilih.length
+                ? dipilih.map(function (j) { return j + ':00–' + (j + 1) + ':00'; }).join(', ')
+                : 'Belum ada jam dipilih.';
+        }
+        var total = dipilih.length * hargaPerJam;
+        if (totalEl) totalEl.textContent = 'Rp ' + total.toLocaleString('id-ID');
+        if (btn) {
+            btn.disabled = dipilih.length === 0;
+            btn.setAttribute('aria-disabled', dipilih.length === 0 ? 'true' : 'false');
+        }
+    }
+
+    slots.forEach(function (slot) {
+        slot.addEventListener('click', function () {
+            if (slot.disabled || slot.classList.contains('slot-terisi') || slot.classList.contains('slot-lewat')) { return; }
+            var jam = parseInt(slot.getAttribute('data-jam'), 10);
+            var idx = dipilih.indexOf(jam);
+            if (idx >= 0) {
+                dipilih.splice(idx, 1);
+                slot.classList.remove('slot-dipilih');
+                slot.setAttribute('aria-pressed', 'false');
+            } else if (dipilih.length < 3) {
+                dipilih.push(jam);
+                dipilih.sort(function (a, b) { return a - b; });
+                slot.classList.add('slot-dipilih');
+                slot.setAttribute('aria-pressed', 'true');
+            }
+            perbarui();
+        });
+    });
+
+    perbarui();
+})();
+</script>

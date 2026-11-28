@@ -121,7 +121,7 @@ require __DIR__ . '/../includes/header.php';
                         <div class="small text-muted" style="line-height:1.2;">Batas pembayaran</div>
                         <div class="fw-semibold text-danger hitung-mundur-verif" data-detik="<?php echo (int) sisa_detik_batas_bayar($b['batas_bayar']); ?>">--:--:--</div>
                         <?php else: ?>
-                        <span class="badge badge-ringkasan">Siap diverifikasi</span>
+                        <span class="badge-status badge-biru">Siap diverifikasi</span>
                         <?php endif; ?>
                     </td>
                     <td><a href="<?php echo BASE_URL; ?>/../admin/booking.php" class="btn btn-sm btn-outline-aksi">Verifikasi</a></td>
@@ -139,7 +139,7 @@ require __DIR__ . '/../includes/header.php';
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="h6 card-subtitle mb-0">Booking Hari Ini</h3>
-            <span class="badge badge-ringkasan"><?php echo count($bookingHariIni); ?> booking</span>
+            <span class="badge-status badge-sekunder"><?php echo count($bookingHariIni); ?> booking</span>
         </div>
         <div class="row g-3">
             <?php foreach ($bookingHariIni as $b):
@@ -156,7 +156,8 @@ require __DIR__ . '/../includes/header.php';
                             <div class="small text-muted"><?php echo e($b['nama_user']); ?></div>
                         </div>
                         <div class="text-center">
-                            <span class="badge-status badge-<?php echo e(array_flip(['menunggu_pembayaran' => 'warning','menunggu_verifikasi' => 'info','dikonfirmasi' => 'success','ditolak' => 'danger','dibatalkan' => 'secondary'])[$b['status']] ?? 'secondary'); ?>"><?php echo e($teks); ?></span>
+                            <?php $kelasMap = ['menunggu_pembayaran' => 'oranye','menunggu_verifikasi' => 'biru','dikonfirmasi' => 'hijau','ditolak' => 'merah','dibatalkan' => 'sekunder']; ?>
+                            <span class="badge-status badge-<?php echo e($kelasMap[$b['status']] ?? 'sekunder'); ?>"><?php echo e($teks); ?></span>
                         </div>
                     </div>
                 </div>

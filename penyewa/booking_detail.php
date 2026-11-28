@@ -1,7 +1,7 @@
 <?php
 /**
  * penyewa/booking_detail.php — detail booking + bukti transfer & batalkan.
- * Poles UI/UX (PROMPT 2 D.2): stepper 4 langkah, hitung mundur batas bayar,
+ * Poles UI/UX (PROMPT 2): stepper 4 langkah, hitung mundur batas bayar,
  * kartu rekening dengan tombol salin + toast, dropzone bukti drag-and-drop
  * dengan pratinjau gambar, modal konfirmasi batalkan.
  */
@@ -174,7 +174,7 @@ require __DIR__ . '/../includes/header.php';
     <i class="bi bi-hourglass-split fs-4" aria-hidden="true"></i>
     <div>
         <div class="fw-semibold">Batas waktu pembayaran</div>
-        <div class="fs-5 fw-bold" id="hitung-mundur" data-detik="<?php echo (int) $sisaDetik; ?>">--:--:--</div>
+        <div class="fs-5 fw-bold hitung-mundur-bayar" data-detik="<?php echo (int) $sisaDetik; ?>">--:--:--</div>
         <div class="small">Unggah bukti transfer dalam waktu 2 jam, atau booking akan otomatis dibatalkan.</div>
     </div>
 </div>
@@ -267,7 +267,7 @@ require __DIR__ . '/../includes/header.php';
         <div class="card mb-4 border-0 shadow-sm">
             <div class="card-body">
                 <h3 class="h6 card-subtitle">Pembayaran Transfer Manual</h3>
-                <div class="bg-lightest rounded p-3 mb-3">
+                <div class="bg-krem rounded p-3 mb-3">
                     <p class="small text-muted mb-1">Rekening tujuan</p>
                     <div class="d-flex align-items-center gap-3 flex-wrap mb-2">
                         <span class="fw-semibold"><?php echo e(BANK_NAMA); ?></span>
@@ -344,7 +344,7 @@ require __DIR__ . '/../includes/header.php';
             <?php echo csrf_field(); ?>
             <input type="hidden" name="action" value="batalkan">
             <div class="modal-content">
-                <div class="modal-header bg-lightest">
+                <div class="modal-header bg-krem">
                     <h5 class="modal-title" id="modalBatalkanLabel">Batalkan Booking?</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
@@ -415,7 +415,7 @@ function previewBukti(input) {
     img.src = url;
     img.classList.remove('d-none');
     if (ikon) { ikon.style.display = 'none'; }
-    if (dropzone) { dropzone.classList.add('kotak-terisi'); }
+    if (dropzone) { dropzone.classList.add('kotak-dipilih'); }
 }
 
 /* Toast sederhana */
@@ -437,9 +437,7 @@ function tampilkanToast(pesan, jenis) {
 <style>
 /* Khusus halaman ini */
 .btn-salin { font-size: 0.85rem; padding: 0.25rem 0.6rem; }
-.stepper-item.gagal .step-ball { background: var(--warna-bahaya); border-color: var(--warna-bahaya); color: #fff; }
-.stepper-item.gagal .step-ball i { color: #fff; }
-.stepper-item.gagal .step-label { color: var(--warna-bahaya); }
-.kotak-terisi { background: #f0fdf4 !important; border-color: var(--warna-primer) !important; }
+.kotak-dipilih { background: var(--warna-primer-tint) !important; border-color: var(--warna-primer) !important; }
 .sticky-aksi { position: sticky; top: 100px; }
+.bg-krem { background: var(--warna-bg-netral); }
 </style>

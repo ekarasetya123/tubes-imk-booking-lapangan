@@ -64,12 +64,16 @@ require __DIR__ . '/../includes/header.php';
     </ol>
 </nav>
 
-<h1 class="section-title mb-1">Riwayat Booking Saya</h1>
-<p class="text-muted mb-4">Daftar semua booking yang pernah Anda buat di LapanganKu.</p>
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <div>
+        <h1 class="section-title mb-1">Riwayat Booking Saya</h1>
+        <p class="text-muted mb-0">Daftar semua booking yang pernah Anda buat di LapanganKu.</p>
+    </div>
+</div>
 
-<form method="get" action="riwayat.php" class="row g-2 align-items-end mb-4 filtri-riwayat">
+<form method="get" action="riwayat.php" class="row g-2 align-items-end mb-4 filtri-riwayat" aria-label="Filter riwayat booking">
     <div class="col-md-4">
-        <label for="status" class="form-label">Status</label>
+        <label for="status" class="form-label required">Status</label>
         <select id="status" name="status" class="form-select" onchange="this.form.submit()">
             <option value="" <?php echo $filterStatus === '' ? 'selected' : ''; ?>>Semua</option>
             <?php foreach (['menunggu_pembayaran','menunggu_verifikasi','dikonfirmasi','ditolak','dibatalkan'] as $s): [$t] = status_booking_label($s); ?>
@@ -87,37 +91,39 @@ require __DIR__ . '/../includes/header.php';
 </form>
 
 <?php if ($bookingList): ?>
-<div class="table-responsive">
-    <table class="table table-hover align-middle table-riwayat">
-        <thead>
-        <tr>
-            <th class="align-middle">Kode</th>
-            <th class="align-middle">Lapangan</th>
-            <th class="align-middle">Tanggal &amp; Waktu</th>
-            <th class="align-middle">Durasi</th>
-            <th class="align-middle">Total</th>
-            <th class="align-middle">Status</th>
-            <th class="align-middle" style="width: 150px;">Aksi</th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($bookingList as $b):
-            [$teks] = status_booking_label($b['status']);
-        ?>
-        <tr>
-            <td><code class="text-monospace fw-semibold"><?php echo e($b['kode']); ?></code></td>
-            <td><?php echo e($b['nama_lapangan']); ?><br><span class="small text-muted text-capitalize"><?php echo e($b['jenis_lapangan']); ?></span></td>
-            <td><?php echo format_tanggal($b['tanggal']); ?> · <?php echo format_jam($b['jam_mulai']); ?>–<?php echo format_jam($b['jam_selesai']); ?></td>
-            <td><?php echo (int)$b['durasi']; ?> jam</td>
-            <td><strong><?php echo rupiah($b['total_harga']); ?></strong></td>
-            <td><span class="badge-status badge-<?php echo e(array_flip(['menunggu_pembayaran' => 'warning','menunggu_verifikasi' => 'info','dikonfirmasi' => 'success','ditolak' => 'danger','dibatalkan' => 'secondary'])[$b['status']] ?? 'secondary'); ?>"><?php echo e($teks); ?></span></td>
-            <td>
-                <a href="<?php echo BASE_URL; ?>/../penyewa/booking_detail.php?id=<?php echo (int)$b['id']; ?>" class="btn btn-sm btn-outline-aksi">Detail</a>
-            </td>
-        </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
+<div class="card border-0 shadow-sm mb-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle table-riwayat mb-0">
+            <thead>
+            <tr>
+                <th class="align-middle">Kode</th>
+                <th class="align-middle">Lapangan</th>
+                <th class="align-middle">Tanggal &amp; Waktu</th>
+                <th class="align-middle">Durasi</th>
+                <th class="align-middle">Total</th>
+                <th class="align-middle">Status</th>
+                <th class="align-middle" style="width: 150px;">Aksi</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($bookingList as $b):
+                [$teks] = status_booking_label($b['status']);
+            ?>
+            <tr>
+                <td><code class="text-monospace fw-semibold"><?php echo e($b['kode']); ?></code></td>
+                <td><?php echo e($b['nama_lapangan']); ?><br><span class="small text-muted text-capitalize"><?php echo e($b['jenis_lapangan']); ?></span></td>
+                <td><?php echo format_tanggal($b['tanggal']); ?> · <?php echo format_jam($b['jam_mulai']); ?>–<?php echo format_jam($b['jam_selesai']); ?></td>
+                <td><?php echo (int)$b['durasi']; ?> jam</td>
+                <td><strong><?php echo rupiah($b['total_harga']); ?></strong></td>
+                <td><span class="badge-status badge-<?php echo e(array_flip(['menunggu_pembayaran' => 'warning','menunggu_verifikasi' => 'info','dikonfirmasi' => 'success','ditolak' => 'danger','dibatalkan' => 'secondary'])[$b['status']] ?? 'secondary'); ?>"><?php echo e($teks); ?></span></td>
+                <td>
+                    <a href="<?php echo BASE_URL; ?>/../penyewa/booking_detail.php?id=<?php echo (int)$b['id']; ?>" class="btn btn-sm btn-outline-aksi">Detail</a>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <?php if ($totalHalaman > 1): ?>

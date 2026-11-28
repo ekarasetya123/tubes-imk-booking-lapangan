@@ -151,7 +151,7 @@ require __DIR__ . '/../includes/header.php';
 <h1 class="section-title mb-1">Kelola Semua Booking</h1>
 <p class="text-muted mb-4">Verifikasi atau tolak bukti transfer pengajuan pembayaran penyewa.</p>
 
-<form method="get" action="booking.php" class="row g-2 align-items-end mb-4 filtri-booking">
+<form method="get" action="booking.php" class="row g-2 align-items-end mb-4 filtri-booking" aria-label="Filter data booking">
     <div class="col-md-3">
         <label for="status" class="form-label">Status</label>
         <select id="status" name="status" class="form-select" onchange="this.form.submit()">
@@ -184,143 +184,143 @@ require __DIR__ . '/../includes/header.php';
 </form>
 
 <?php if ($daftarBooking): ?>
-<div class="table-responsive">
-    <table class="table table-hover align-middle table-booking">
-        <thead>
-        <tr>
-            <th class="align-middle" style="width: 45px;">#</th>
-            <th class="align-middle">Kode / Penyewa</th>
-            <th class="align-middle">Lapangan</th>
-            <th class="align-middle" style="width: 160px;">Tanggal &amp; Waktu</th>
-            <th class="align-middle" style="width: 110px;">Total</th>
-            <th class="align-middle" style="width: 140px;">Status</th>
-            <th class="align-middle" style="width: 150px;">Bukti Bayar</th>
-            <th class="align-middle" style="width: 170px;">Aksi</th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php $no = ($halaman - 1) * $batas + 1; foreach ($daftarBooking as $b):
-            [$teks, $kelas, $ikon] = status_booking_label($b['status']);
-        ?>
-        <tr>
-            <td class="align-middle"><?php echo $no++; ?></td>
-            <td class="align-middle fw-semibold"><?php echo e($b['kode']); ?><br>
-                <span class="small text-muted"><?php echo e($b['nama_user']); ?></span></td>
-            <td class="align-middle"><?php echo e($b['nama_lapangan']); ?><br>
-                <span class="small text-muted text-capitalize"><?php echo e($b['jenis_lapangan']); ?></span></td>
-            <td class="align-middle"><?php echo format_tanggal($b['tanggal']); ?> · <?php echo format_jam($b['jam_mulai']); ?>–<?php echo format_jam($b['jam_selesai']); ?></td>
-            <td class="align-middle"><strong><?php echo rupiah($b['total_harga']); ?></strong></td>
-            <td class="align-middle"><span class="badge-status badge-<?php echo e($kelas); ?>"><?php echo e($teks); ?></span></td>
-            <td class="align-middle">
-                <?php if (!empty($b['bukti_file'])): ?>
-                <button class="btn btn-sm btn-outline-aksi" data-bs-toggle="modal" data-bs-target="#modalBukti<?php echo (int)$b['id']; ?>">
-                    <i class="bi bi-eye"></i> Lihat
-                </button>
-                <?php else: ?>
-                <span class="text-muted small">—</span>
-                <?php endif; ?>
-            </td>
-            <td class="align-middle">
-                <div class="btn-group-vertical btn-group-sm d-grid w-100">
-                    <?php if ($b['status'] ?? null): ?>
-                    <?php if ($b['status'] === 'menunggu_verifikasi' || $b['status'] === 'menunggu_pembayaran'): ?>
-                    <button class="btn btn-aksi" data-bs-toggle="modal" data-bs-target="#modalVerifikasi<?php echo (int)$b['id']; ?>">
-                        Verifikasi
+<div class="card border-0 shadow-sm mb-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle table-booking mb-0">
+            <thead>
+            <tr>
+                <th class="align-middle" style="width: 45px;">#</th>
+                <th class="align-middle">Kode / Penyewa</th>
+                <th class="align-middle">Lapangan</th>
+                <th class="align-middle" style="width: 160px;">Tanggal &amp; Waktu</th>
+                <th class="align-middle" style="width: 110px;">Total</th>
+                <th class="align-middle" style="width: 140px;">Status</th>
+                <th class="align-middle" style="width: 150px;">Bukti Bayar</th>
+                <th class="align-middle" style="width: 170px;">Aksi</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php $no = ($halaman - 1) * $batas + 1; foreach ($daftarBooking as $b):
+                [$teks, $kelas, $ikon] = status_booking_label($b['status']);
+            ?>
+            <tr>
+                <td class="align-middle"><?php echo $no++; ?></td>
+                <td class="align-middle fw-semibold"><?php echo e($b['kode']); ?><br>
+                    <span class="small text-muted"><?php echo e($b['nama_user']); ?></span></td>
+                <td class="align-middle"><?php echo e($b['nama_lapangan']); ?><br>
+                    <span class="small text-muted text-capitalize"><?php echo e($b['jenis_lapangan']); ?></span></td>
+                <td class="align-middle"><?php echo format_tanggal($b['tanggal']); ?> · <?php echo format_jam($b['jam_mulai']); ?>–<?php echo format_jam($b['jam_selesai']); ?></td>
+                <td class="align-middle"><strong><?php echo rupiah($b['total_harga']); ?></strong></td>
+                <td class="align-middle"><span class="badge-status badge-<?php echo e($kelas); ?>"><?php echo e($teks); ?></span></td>
+                <td class="align-middle">
+                    <?php if (!empty($b['bukti_file'])): ?>
+                    <button class="btn btn-sm btn-outline-aksi" data-bs-toggle="modal" data-bs-target="#modalBukti<?php echo (int)$b['id']; ?>">
+                        <i class="bi bi-eye"></i> Lihat
                     </button>
+                    <?php else: ?>
+                    <span class="text-muted small">—</span>
                     <?php endif; ?>
-                    <?php if ($b['status'] === 'menunggu_verifikasi' || $b['status'] === 'menunggu_pembayaran'): ?>
-                    <button class="btn btn-bahaya" data-bs-toggle="modal" data-bs-target="#modalTolak<?php echo (int)$b['id']; ?>">
-                        Tolak
-                    </button>
-                    <?php endif; ?>
-                    <?php endif; ?>
-                </div>
-            </td>
-        </tr>
-
-        <!-- Modal lihat bukti -->
-        <?php if (!empty($b['bukti_file'])): ?>
-        <div class="modal fade" id="modalBukti<?php echo (int)$b['id']; ?>" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0">
-                    <div class="modal-header bg-lightest">
-                        <h5 class="modal-title">Bukti Transfer</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <img src="<?php echo BASE_URL; ?>/../uploads/bukti/<?php echo e($b['bukti_file']); ?>"
-                             class="img-fluid" style="max-height: 300px; object-fit: contain;" alt="Bukti transfer">
-                        <?php if (!empty($b['catatan_admin'])): ?>
-                        <div class="mt-3 p-3 bg-light border rounded">
-                            <div class="fw-semibold small">Catatan admin:</div>
-                            <div class="small"><?php echo e($b['catatan_admin']); ?></div>
-                        </div>
+                </td>
+                <td class="align-middle">
+                    <div class="btn-group-vertical btn-group-sm d-grid w-100">
+                        <?php if ($b['status'] === 'menunggu_verifikasi' || $b['status'] === 'menunggu_pembayaran'): ?>
+                        <button class="btn btn-aksi" data-bs-toggle="modal" data-bs-target="#modalVerifikasi<?php echo (int)$b['id']; ?>">
+                            Verifikasi
+                        </button>
+                        <?php endif; ?>
+                        <?php if ($b['status'] === 'menunggu_verifikasi' || $b['status'] === 'menunggu_pembayaran'): ?>
+                        <button class="btn btn-bahaya" data-bs-toggle="modal" data-bs-target="#modalTolak<?php echo (int)$b['id']; ?>">
+                            Tolak
+                        </button>
                         <?php endif; ?>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-aksi" data-bs-dismiss="modal">Tutup</button>
+                </td>
+            </tr>
+
+            <!-- Modal lihat bukti -->
+            <?php if (!empty($b['bukti_file'])): ?>
+            <div class="modal fade" id="modalBukti<?php echo (int)$b['id']; ?>" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0">
+                        <div class="modal-header bg-krem">
+                            <h5 class="modal-title">Bukti Transfer</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <img src="<?php echo BASE_URL; ?>/../uploads/bukti/<?php echo e($b['bukti_file']); ?>"
+                                 class="img-fluid" style="max-height: 300px; object-fit: contain;" alt="Bukti transfer">
+                            <?php if (!empty($b['catatan_admin'])): ?>
+                            <div class="mt-3 p-3 bg-krem border rounded">
+                                <div class="fw-semibold small">Catatan admin:</div>
+                                <div class="small"><?php echo e($b['catatan_admin']); ?></div>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-aksi" data-bs-dismiss="modal">Tutup</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <?php endif; ?>
+            <?php endif; ?>
 
-        <!-- Modal verifikasi -->
-        <?php if ($b['status'] === 'menunggu_verifikasi' || $b['status'] === 'menunggu_pembayaran'): ?>
-        <div class="modal fade" id="modalVerifikasi<?php echo (int)$b['id']; ?>" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <form method="post" action="booking.php">
-                    <?php echo csrf_field(); ?>
-                    <input type="hidden" name="action" value="verifikasi">
-                    <input type="hidden" name="booking_id" value="<?php echo (int)$b['id']; ?>">
-                    <div class="modal-content">
-                        <div class="modal-header bg-lightest">
-                            <h5 class="modal-title">Verifikasi Bukti?</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            <!-- Modal verifikasi -->
+            <?php if ($b['status'] === 'menunggu_verifikasi' || $b['status'] === 'menunggu_pembayaran'): ?>
+            <div class="modal fade" id="modalVerifikasi<?php echo (int)$b['id']; ?>" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <form method="post" action="booking.php">
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" name="action" value="verifikasi">
+                        <input type="hidden" name="booking_id" value="<?php echo (int)$b['id']; ?>">
+                        <div class="modal-content border-0">
+                            <div class="modal-header bg-krem">
+                                <h5 class="modal-title">Verifikasi Bukti?</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                            </div>
+                            <div class="modal-body">
+                                Yakin ingin mengonfirmasi pembayaran booking <strong><?php echo e($b['kode']); ?></strong>?
+                                Status akan menjadi <span class="text-success fw-semibold">Dikonfirmasi</span>.
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-aksi" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-aksi">Ya, Verifikasi</button>
+                            </div>
                         </div>
-                        <div class="modal-body">
-                            Yakin ingin mengonfirmasi pembayaran booking <strong><?php echo e($b['kode']); ?></strong>?
-                            Status akan menjadi <span class="text-success fw-semibold">Dikonfirmasi</span>.
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-aksi" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-aksi">Ya, Verifikasi</button>
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
-        <?php endif; ?>
+            <?php endif; ?>
 
-        <!-- Modal tolak -->
-        <?php if ($b['status'] === 'menunggu_verifikasi' || $b['status'] === 'menunggu_pembayaran'): ?>
-        <div class="modal fade" id="modalTolak<?php echo (int)$b['id']; ?>" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <form method="post" action="booking.php">
-                    <?php echo csrf_field(); ?>
-                    <input type="hidden" name="action" value="tolak">
-                    <input type="hidden" name="booking_id" value="<?php echo (int)$b['id']; ?>">
-                    <div class="modal-content">
-                        <div class="modal-header bg-lightest">
-                            <h5 class="modal-title">Tolak Bukti?</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            <!-- Modal tolak -->
+            <?php if ($b['status'] === 'menunggu_verifikasi' || $b['status'] === 'menunggu_pembayaran'): ?>
+            <div class="modal fade" id="modalTolak<?php echo (int)$b['id']; ?>" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <form method="post" action="booking.php">
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" name="action" value="tolak">
+                        <input type="hidden" name="booking_id" value="<?php echo (int)$b['id']; ?>">
+                        <div class="modal-content border-0">
+                            <div class="modal-header bg-krem">
+                                <h5 class="modal-title">Tolak Bukti?</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Alasan penolakan wajib diisi.</p>
+                                <textarea name="alasan" rows="3" class="form-control" placeholder="Contoh: Bukti transfer tidak terlihat jelas..." required></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-aksi" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-bahaya">Ya, Tolak</button>
+                            </div>
                         </div>
-                        <div class="modal-body">
-                            <p>Alasan penolakan wajib diisi.</p>
-                            <textarea name="alasan" rows="3" class="form-control" placeholder="Contoh: Bukti transfer tidak terlihat jelas..." required></textarea>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-aksi" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-bahaya">Ya, Tolak</button>
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
-        <?php endif; ?>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
+            <?php endif; ?>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <?php if ($totalHalaman > 1): ?>

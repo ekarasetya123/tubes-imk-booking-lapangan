@@ -80,7 +80,7 @@ require __DIR__ . '/../includes/header.php';
             <?php if ($terdekat['status'] === 'menunggu_pembayaran'): ?>
             <div class="mt-2">
                 <div class="small text-muted">Batas pembayaran</div>
-                <div class="fs-6 fw-bold text-danger" id="hitungMundurTerdekat" data-detik="<?php echo (int) sisa_detik_batas_bayar($terdekat['batas_bayar']); ?>">--:--:--</div>
+                <div class="fs-6 fw-bold text-danger hitung-mundur-terdekat" data-detik="<?php echo (int) sisa_detik_batas_bayar($terdekat['batas_bayar']); ?>">--:--:--</div>
             </div>
             <?php endif; ?>
         </div>
@@ -163,4 +163,5 @@ require __DIR__ . '/../includes/header.php';
 <style>
 .card-terdekat .badge-status { font-size: 0.85rem; }
 .card-terdekat .btn-outline-aksi { font-size: 0.85rem; }
+.hitung-mundur-terdekat { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 </style>

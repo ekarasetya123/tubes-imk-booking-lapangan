@@ -27,16 +27,16 @@ require __DIR__ . '/../includes/header.php';
 <!-- HERO -->
 <section class="hero-lapanganku mb-5">
     <div class="hero-inner container">
-        <div class="row align-items-center g-4">
+        <div class="row align-items-center g-4 g-lg-5">
             <div class="col-lg-7">
                 <p class="hero-eyebrow"><i class="bi bi-lightning-charge-fill me-1"></i> Booking lapangan olahraga dalam 3 langkah</p>
                 <h1 class="hero-title">Main futsal &amp; badminton,<br>tinggal <span class="hero-highlight">pilih jam</span>.</h1>
                 <p class="hero-sub">LapanganKu memudahkan Anda melihat jadwal kosong secara langsung, booking per jam,
                 dan mengunggah bukti transfer — tanpa perlu telepon.</p>
-                <div class="d-flex flex-wrap gap-2 mt-4">
+                <div class="d-flex flex-wrap gap-2 mt-5">
                     <a href="<?php echo BASE_URL; ?>/jadwal.php" class="btn btn-aksi btn-lg"><i class="bi bi-calendar2-check me-2"></i>Lihat Jadwal &amp; Booking</a>
                     <?php if (!is_logged_in()): ?>
-                    <a href="<?php echo BASE_URL; ?>/register.php" class="btn btn-outline-light btn-lg">Buat Akun Gratis</a>
+                    <a href="<?php echo BASE_URL; ?>/register.php" class="btn btn-outline-aksi btn-lg">Buat Akun Gratis</a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -46,12 +46,23 @@ require __DIR__ . '/../includes/header.php';
                     <p class="hero-card-angka"><?php echo $totalLapangan; ?>+</p>
                     <p class="hero-card-label">lapangan aktif siap dibooking hari ini</p>
                     <?php if ($hargaMulai !== null): ?>
-                    <div class="hero-card-strip">
+                    <div class="hero-card-strip mt-3">
                         <span><i class="bi bi-tag-fill lap-futsal" aria-hidden="true"></i> Harga mulai <?php echo rupiah($hargaMulai); ?> / jam</span>
                         <span class="lap-futsal"><i class="bi bi-circle-fill lap-futsal" aria-hidden="true"></i> Futsal</span>
                         <span class="lap-badminton"><i class="bi bi-circle-fill lap-badminton" aria-hidden="true"></i> Badminton</span>
                     </div>
                     <?php endif; ?>
+                </div>
+                <div class="mt-5">
+                    <h6 class="text-muted small mb-2">Contoh harga per jam</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        <?php foreach (array_slice($lapanganAktif, 0, 3) as $l): ?>
+                        <span class="chip-lapangan" style="cursor:default;" title="<?php echo e($l['nama']); ?>">
+                            <span class="kotak-warna kotak-tersedia" aria-hidden="true"></span>
+                            <?php echo e($l['nama']); ?> · <?php echo rupiah($l['harga_per_jam']); ?>/jam
+                        </span>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
         </div>

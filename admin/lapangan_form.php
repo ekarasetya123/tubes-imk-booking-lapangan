@@ -97,20 +97,20 @@ require __DIR__ . '/../includes/header.php';
 
 <div class="row justify-content-center">
     <div class="col-md-7 col-lg-6">
-        <div class="card auth-card">
-            <div class="card-body p-4">
+        <div class="card auth-card border-0 shadow-sm mb-4">
+            <div class="card-body p-4 p-md-5">
                 <h3 class="h5 section-title mb-1"><?php echo $title; ?></h3>
                 <p class="text-muted small mb-4">Isi semua kolom berikut untuk menyimpan data lapangan.</p>
                 <form method="post" action="lapangan_form.php<?php echo $edit ? '?id=' . $edit : ''; ?>" novalidate>
                     <?php echo csrf_field(); ?>
                     <div class="mb-3">
-                        <label for="nama" class="form-label">Nama Lapangan</label>
+                        <label for="nama" class="form-label required">Nama Lapangan</label>
                         <input type="text" id="nama" name="nama" class="form-control <?php echo isset($errors['nama']) ? 'is-invalid' : ''; ?>"
                                value="<?php echo e($nama); ?>" placeholder="Contoh: Lapangan Futsal A" required aria-describedby="nama-error">
                         <?php if (isset($errors['nama'])): ?><div class="invalid-feedback" id="nama-error"><?php echo e($errors['nama']); ?></div><?php endif; ?>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Jenis Lapangan</label>
+                        <label class="form-label required">Jenis Lapangan</label>
                         <div class="row g-2">
                             <div class="col-auto">
                                 <div class="form-check form-check-inline">
@@ -136,7 +136,7 @@ require __DIR__ . '/../includes/header.php';
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6 col-xl-4">
-                            <label for="harga" class="form-label">Harga per Jam</label>
+                            <label for="harga" class="form-label required">Harga per Jam</label>
                             <div class="input-group mb-3">
                                 <span class="input-group-text">Rp</span>
                                 <input type="number" id="harga" name="harga" class="form-control <?php echo isset($errors['harga']) ? 'is-invalid' : ''; ?>"
@@ -145,19 +145,19 @@ require __DIR__ . '/../includes/header.php';
                             </div>
                         </div>
                         <div class="col-md-6 col-xl-4">
-                            <label for="jam_buka" class="form-label">Jam Buka</label>
+                            <label for="jam_buka" class="form-label required">Jam Buka</label>
                             <input type="time" id="jam_buka" name="jam_buka" class="form-control"
                                    value="<?php echo e(substr($jamBuka, 0, 5)); ?>" required>
                         </div>
                         <div class="col-md-6 col-xl-4">
-                            <label for="jam_tutup" class="form-label">Jam Tutup</label>
+                            <label for="jam_tutup" class="form-label required">Jam Tutup</label>
                             <input type="time" id="jam_tutup" name="jam_tutup" class="form-control"
                                    value="<?php echo e(substr($jamTutup, 0, 5)); ?>" required>
                             <?php if (isset($errors['jam_tutup'])): ?><div class="invalid-feedback mt-2"><?php echo e($errors['jam_tutup']); ?></div><?php endif; ?>
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label class="form-label d-block mb-2">Status</label>
+                        <label class="form-label d-block mb-2 required">Status</label>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" id="statusAktif" name="status" value="aktif"
                                    type="radio" <?php echo $status === 'aktif' ? 'checked' : ''; ?>>

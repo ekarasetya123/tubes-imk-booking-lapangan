@@ -75,21 +75,21 @@ require __DIR__ . '/../includes/header.php';
 
 <div class="row justify-content-center">
     <div class="col-md-7 col-lg-5">
-        <div class="card auth-card mb-4">
-            <div class="card-body p-4">
+        <div class="card auth-card border-0 shadow-sm mb-4">
+            <div class="card-body p-4 p-md-5">
                 <h3 class="h5 section-title mb-1">Ubah Profil</h3>
                 <p class="text-muted small mb-3">Perbarui nama dan nomor HP Anda.</p>
                 <form method="post" action="profil.php" novalidate>
                     <?php echo csrf_field(); ?>
                     <input type="hidden" name="action" value="profil">
                     <div class="mb-3">
-                        <label for="nama" class="form-label">Nama lengkap</label>
+                        <label for="nama" class="form-label required">Nama lengkap</label>
                         <input type="text" id="nama" name="nama" class="form-control <?php echo isset($errors['nama']) ? 'is-invalid' : ''; ?>"
                                value="<?php echo e($nama); ?>" required aria-describedby="nama-error">
                         <?php if (isset($errors['nama'])): ?><div class="invalid-feedback" id="nama-error"><?php echo e($errors['nama']); ?></div><?php endif; ?>
                     </div>
                     <div class="mb-3">
-                        <label for="no_hp" class="form-label">Nomor HP (WhatsApp)</label>
+                        <label for="no_hp" class="form-label required">Nomor HP (WhatsApp)</label>
                         <input type="tel" id="no_hp" name="no_hp" class="form-control <?php echo isset($errors['no_hp']) ? 'is-invalid' : ''; ?>"
                                value="<?php echo e($noHp); ?>" placeholder="08xxxxxxxxxx" required aria-describedby="nohp-error">
                         <?php if (isset($errors['no_hp'])): ?><div class="invalid-feedback" id="nohp-error"><?php echo e($errors['no_hp']); ?></div><?php endif; ?>
@@ -106,22 +106,27 @@ require __DIR__ . '/../includes/header.php';
             </div>
         </div>
 
-        <div class="card auth-card">
-            <div class="card-body p-4">
+        <div class="card auth-card border-0 shadow-sm">
+            <div class="card-body p-4 p-md-5">
                 <h3 class="h5 section-title mb-1">Ubah Kata Sandi</h3>
                 <p class="text-muted small mb-3">Isi semua kolom untuk mengganti kata sandi akun.</p>
                 <form method="post" action="profil.php" novalidate>
                     <?php echo csrf_field(); ?>
                     <input type="hidden" name="action" value="password">
                     <div class="mb-3">
-                        <label for="password_lama" class="form-label">Kata sandi saat ini</label>
+                        <label for="password_lama" class="form-label required">Kata sandi saat ini</label>
                         <input type="password" id="password_lama" name="password_lama"
                                class="form-control <?php echo isset($errors['lama']) ? 'is-invalid' : ''; ?>"
-                               required aria-describedby="lama-error">
+                               required aria-describedby="lama-error toggle-pw-lama">
+                        <div class="input-group mt-1">
+                            <button class="btn btn-outline-secondary" type="button" id="toggle-pw-lama" aria-label="Tampilkan kata sandi">
+                                <i class="bi bi-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
                         <?php if (isset($errors['lama'])): ?><div class="invalid-feedback" id="lama-error"><?php echo e($errors['lama']); ?></div><?php endif; ?>
                     </div>
                     <div class="mb-3">
-                        <label for="password_baru" class="form-label">Kata sandi baru</label>
+                        <label for="password_baru" class="form-label required">Kata sandi baru</label>
                         <div class="input-group">
                             <input type="password" id="password_baru" name="password_baru"
                                    class="form-control <?php echo isset($errors['baru']) ? 'is-invalid' : ''; ?>"
@@ -134,10 +139,15 @@ require __DIR__ . '/../includes/header.php';
                         <div class="form-text">Minimal 8 karakter.</div>
                     </div>
                     <div class="mb-3">
-                        <label for="konfirmasi_password" class="form-label">Ulangi kata sandi baru</label>
+                        <label for="konfirmasi_password" class="form-label required">Ulangi kata sandi baru</label>
                         <input type="password" id="konfirmasi_password" name="konfirmasi_password"
                                class="form-control <?php echo isset($errors['konf']) ? 'is-invalid' : ''; ?>"
-                               required aria-describedby="konf-error">
+                               required aria-describedby="konf-error toggle-pw-konf">
+                        <div class="input-group mt-1">
+                            <button class="btn btn-outline-secondary" type="button" id="toggle-pw-konf" aria-label="Tampilkan kata sandi">
+                                <i class="bi bi-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
                         <?php if (isset($errors['konf'])): ?><div class="invalid-feedback" id="konf-error"><?php echo e($errors['konf']); ?></div><?php endif; ?>
                     </div>
                     <button type="submit" class="btn btn-aksi w-100">Ubah Kata Sandi</button>
@@ -148,3 +158,7 @@ require __DIR__ . '/../includes/header.php';
 </div>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>
+
+<style>
+.bg-krem { background: var(--warna-bg-netral); }
+</style>

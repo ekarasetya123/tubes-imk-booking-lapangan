@@ -50,7 +50,6 @@ $jamTerpakai = (int)db_query(
 )->fetchColumn();
 
 // Grafik pendapatan per hari (array tanggal -> total)
-// Inisialisasi semua tanggal dalam rentang dengan nol
 $grafik = [];
 $tglCursor = strtotime($mulai);
 $tglAkhir = strtotime($selesai);
@@ -94,16 +93,21 @@ require __DIR__ . '/../includes/header.php';
     </ol>
 </nav>
 
-<h1 class="section-title mb-1">Laporan Pemilik</h1>
-<p class="text-muted mb-4">Pendapatan dan penggunaan lapangan dapat difilter per tanggal maupun lapangan.</p>
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <div>
+        <h1 class="section-title mb-1">Laporan Pemilik</h1>
+        <p class="text-muted mb-0">Pendapatan dan penggunaan lapangan dapat difilter per tanggal maupun lapangan.</p>
+    </div>
+    <button id="btn-cetak" class="btn btn-outline-aksi btn-lg" onclick="window.print();"><i class="bi bi-printer me-1"></i>Cetak Laporan</button>
+</div>
 
-<form method="get" action="laporan.php" class="row g-2 align-items-end mb-4 filtri-laporan">
+<form method="get" action="laporan.php" class="row g-2 align-items-end mb-4 filtri-laporan" aria-label="Filter laporan">
     <div class="col-md-3">
-        <label for="mulai" class="form-label">Dari Tanggal</label>
+        <label for="mulai" class="form-label required">Dari Tanggal</label>
         <input type="date" id="mulai" name="mulai" class="form-control" value="<?php echo e($mulai); ?>">
     </div>
     <div class="col-md-3">
-        <label for="selesai" class="form-label">Sampai Tanggal</label>
+        <label for="selesai" class="form-label required">Sampai Tanggal</label>
         <input type="date" id="selesai" name="selesai" class="form-control" value="<?php echo e($selesai); ?>">
     </div>
     <div class="col-md-4">
@@ -162,7 +166,7 @@ require __DIR__ . '/../includes/header.php';
             <div class="card-body p-4">
                 <h3 class="h6 card-subtitle mb-3">Tabel Rincian</h3>
                 <div class="table-responsive small">
-                    <table class="table table-hover align-middle table-detail">
+                    <table class="table table-hover align-middle table-detail mb-0">
                         <thead>
                         <tr>
                             <th>Tanggal</th><th>Lapangan</th><th>Total</th>
@@ -195,11 +199,6 @@ require __DIR__ . '/../includes/header.php';
             </div>
         </div>
     </div>
-</div>
-
-<!-- Tombol cetak -->
-<div class="mt-4 text-end">
-    <button id="btn-cetak" class="btn btn-outline-aksi btn-lg" onclick="window.print();"><i class="bi bi-printer me-1"></i>Cetak Laporan</button>
 </div>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>
@@ -238,42 +237,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             },
             scales: {
-                y: { beginAtZero: true, ticks: { callback: function(v){ return v; } } }
+                y: { beginAtZero: true }
             }
         }
     });
 });
 </script>
 
-<!-- Stylesheet cetak (hanya saat mencetak) -->
 <style>
-@media print {
-    .no-print, .navbar, .footer-lapanganku, .btn, .filtri-laporan, .card-grafik .small { display: none !important; }
-    body { font-size: 11pt; }
-    .stat-ikon, .badge-status { display: none !important; }
-    .table-detail, .table-detail th, .table-detail td { border: 1px solid #000 !important; }
-    .btn-cetak { display: none !important; }
-    .print-judul { text-align: center; margin-bottom: 1rem; }
-    .print-periode { text-align: center; font-size: 0.9rem; color: #666; margin-bottom: 1rem; }
-    .content-printable h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
-    canvas { max-height: 400px; }
-}
+.bg-krem { background: var(--warna-bg-netral); }
 </style>
-
-<script>
-// Tampilkan judul layak cetak di header saat print untuk dokumentasi
-window.addEventListener('beforeprint', function () {
-    var h = document.querySelector('h1.section-title');
-    if (h) {
-        var periode = document.getElementById('mulai').value + ' — ' + document.getElementById('selesai').value;
-        var el = document.createElement('div');
-        el.className = 'print-judul';
-        el.textContent = 'LAPORAN PENDAPATAN LAPANGANKU';
-        var p = document.createElement('div');
-        p.className = 'print-periode';
-        p.textContent = 'Periode: ' + periode;
-        h.insertAdjacentElement('beforebegin', el);
-        el.insertAdjacentElement('afterend', p);
-    }
-});
-</script>
