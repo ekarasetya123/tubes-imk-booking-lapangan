@@ -16,11 +16,11 @@ $BASE = BASE_URL; // BASE_URL berakhir tanpa slash, URL halaman ada di /public
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo e($title); ?> — LapanganKu</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Font Plus Jakarta Sans (lokal, tidak ada hotlink) -->
+    <link rel="stylesheet" href="<?php echo $BASE; ?>/../assets/font/plus-jakarta.css">
+    <!-- Bootstrap 5.3.3 + Bootstrap Icons (lokal) -->
+    <link rel="stylesheet" href="<?php echo $BASE; ?>/../assets/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="<?php echo $BASE; ?>/../assets/css/vendor/bootstrap-icons.min.css">
     <link href="<?php echo $BASE; ?>/../assets/css/style.css" rel="stylesheet">
 </head>
 <body class="<?php echo e($body_class ?? ''); ?>">

@@ -14,3 +14,8 @@ Thumbs.db
 
 # Log
 *.log
+
+# Dependensi Node (alat uji Playwright, jangan di-commit)
+node_modules/
+package-lock.json
+tools/
